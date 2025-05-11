@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/favicon.svg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="binru.wang">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="APP本地发起http请求，比较本地版本与远程版本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APP远程升级">
+<meta property="og:url" content="http://example.com/2025/03/25/APP%E8%BF%9C%E7%A8%8B%E5%8D%87%E7%BA%A7/index.html">
+<meta property="og:site_name" content="binru-blog">
+<meta property="og:description" content="APP本地发起http请求，比较本地版本与远程版本">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/box3.jpg">
+<meta property="article:published_time" content="2025-03-25T13:52:24.000Z">
+<meta property="article:modified_time" content="2025-05-11T14:07:49.273Z">
+<meta property="article:author" content="binru.wang">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/box3.jpg">
+  
+  
+  
+  <title>APP远程升级 - binru-blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":"true# 是否循环播放效果","scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>日日自新，步步登高</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/box3.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="APP远程升级"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-25 21:52" pubdate>
+          2025年3月25日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">APP远程升级</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一、远程更新原理"><a href="#一、远程更新原理" class="headerlink" title="一、远程更新原理"></a>一、远程更新原理</h2><p>远程更新的本质就是就是通过接口获取数据并进行处理。主要分为以下三步：</p>
+<ol>
+<li>开发后台服务接口，接口提供上传APP、下载APP、获取版本号、获取更新内容等。</li>
+<li>APP本地发起http请求，比较本地版本与远程版本。</li>
+<li>如果本地版本小于远程版本，http返回需要更新flag，反之提示已处于最新状态。</li>
+<li>当接收到需要更新信号，APP弹出更新界面，用户选择自行选择更新与否。</li>
+</ol>
+<h2 id="二、实现步骤"><a href="#二、实现步骤" class="headerlink" title="二、实现步骤"></a>二、实现步骤</h2><ol>
+<li>在服务器端设置一个API接口，用来返回最新版本的信息，包括版本号和下载地址。</li>
+<li>在应用中添加检查更新的逻辑，请求服务器接口获取最新版本信息。</li>
+<li>如果有新版本，提示用户进行下载，并调用系统安装器进行安装。</li>
+</ol>
+<h2 id="三、Android应用端代码"><a href="#三、Android应用端代码" class="headerlink" title="三、Android应用端代码"></a>三、Android应用端代码</h2><ol>
+<li>getAndroidAppInfo() 获取android app versioncode（如10101），后续根据该code判断软件版本状态，versionName：1.01.01；pkName：org.sg.zt_gc；channelNumber：aCom</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-title class_">String</span> <span class="hljs-title function_">getAndroidAppInfo</span>(<span class="hljs-params"></span>)<br>&#123;<br>    …<br>    <span class="hljs-keyword">return</span> versioncode + <span class="hljs-string">&quot;,&quot;</span>+versionName+ <span class="hljs-string">&quot;,&quot;</span>+pkName+ <span class="hljs-string">&quot;,&quot;</span>+channelNumber;<br>&#125;<br></code></pre></td></tr></table></figure>
+<ol start="2">
+<li>installApk</li>
+</ol>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">installApk</span> <span class="hljs-params">(<span class="hljs-type">String</span> filePath)</span></span><br><span class="hljs-function"></span>&#123;<br>    …<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="四、QT端代码"><a href="#四、QT端代码" class="headerlink" title="四、QT端代码"></a>四、QT端代码</h2><p>检测到本地版本低于服务器版本<br><img src="/img/0012.png" srcset="/img/loading.gif" lazyload><br>点击更新，下载安装包<br><img src="/img/0013.png" srcset="/img/loading.gif" lazyload><br>更新完成后即可安装<br><img src="/img/0014.png" srcset="/img/loading.gif" lazyload><br>流程如下：<br><img src="/img/0015.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="五、installAPK"><a href="#五、installAPK" class="headerlink" title="五、installAPK"></a>五、installAPK</h2><p>java代码</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cmake">reqInstallPermission();   // 检查是否有权限，如无权限，跳转到该应用的安装应用的权限页面<br><span class="hljs-keyword">File</span> updateFile = new <span class="hljs-keyword">File</span>(filePath);<br>Intent <span class="hljs-keyword">install</span> = new Intent(Intent.ACTION_VIEW);<br><span class="hljs-keyword">install</span>.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);<br><span class="hljs-keyword">install</span>.setDataAndType(Uri.fromFile(updateFile),<span class="hljs-string">&quot;application/vnd.android.package-archive&quot;</span>);<br>_instance.startActivity(<span class="hljs-keyword">install</span>);<br></code></pre></td></tr></table></figure>
+<p>上面方式简单粗暴，只需要获取安装权限，拥有访问权限，知晓APK位置即可，该方式只在android 7以及以下有效。<br><img src="/img/0016.png" srcset="/img/loading.gif" lazyload><br>我们平台使用的是android 9，安装apk方式如下：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cmake">reqInstallPermission(); // 检查是否有权限，如无权限，跳转到该应用的安装应用的权限页面<br><span class="hljs-keyword">File</span> updateFile = new <span class="hljs-keyword">File</span>(filePath);<br>// <span class="hljs-number">7.0</span>以上，已授权 则 通过 FileProvider 打开对应文件目录的安装文件<br>Uri apkUri = FileProvider.getUriForFile(_instance,_instance.getPackageName()+<span class="hljs-string">&quot;.fileprovider&quot;</span>, updateFile);<br>Intent <span class="hljs-keyword">install</span> = new Intent(Intent.ACTION_VIEW);<br><span class="hljs-keyword">install</span>.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);<br><span class="hljs-keyword">install</span>.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);<br><span class="hljs-keyword">install</span>.setDataAndType(apkUri, <span class="hljs-string">&quot;application/vnd.android.package-archive&quot;</span>);<br>_instance.startActivity(<span class="hljs-keyword">install</span>);<br></code></pre></td></tr></table></figure>
+<pre><code class="hljs">在android版本不断提高的趋势下，系统安全越来越高，很多权限不只在清单文件里面注册那么简单，安装软件需要内存卡读写权限，属于危险权限，需要使用动态代码添加。
+如何将私有数据暴露给PackageInstaller，android7.0以后，开放暴露私有数据的唯一方式是通过ContentProvider来实现，具体步骤如下：
+</code></pre>
+<ol>
+<li>   配置 AndroidManifest.xml 中的 ContentProvider 信息；</li>
+<li>   配置要开放的 paths 信息；</li>
+<li>   在 Java 代码中通过 FileProvider 封装文件信息。</li>
+</ol>
+<p>AndroidManifest.xml配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">provider</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;androidx.core.content.FileProvider&quot;</span> <span class="hljs-attr">android:authorities</span>=<span class="hljs-string">&quot;org.sg.zt_gc.fileprovider&quot;</span> <span class="hljs-attr">android:grantUriPermissions</span>=<span class="hljs-string">&quot;true&quot;</span> <span class="hljs-attr">android:exported</span>=<span class="hljs-string">&quot;false&quot;</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.support.FILE_PROVIDER_PATHS&quot;</span> <span class="hljs-attr">android:resource</span>=<span class="hljs-string">&quot;@xml/provider_paths&quot;</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">provider</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>android:name 属性填写的是 FileProvider 类的完整名称。<br>android:authorities属性就是和普通的 ContentProvider 一样的用于访问文件资源的 uri 标签头。值内容根据实际需要来填写即可。<br>android:exported这个属性表示的是：其他app能否访问这个provider<br>android:grantUriPermissions 这个属性用于给内容提供器的数据子集授权。如果内容提供器的grantUriPermissions属性被设置为true，那么权限能够被授予内容提供器范围内的任何数据。但是，如果grantUriPermission属性被设置为false，那么权限就只能授予这个元素所指定的数据子集。一个内容提供器能够包含任意多个元素。每个都只能指定一个路径（三个可能属性中的一个）。<br>meta-data 标签中的内容需要关注的是 android:resource 属性中的内容。这个属性的值引向一个自行配置的 xml 文件，这份 xml 文件记载的是设备中的路径信息，简单理解就是你想开放哪些目录中的文件资源给第三方使用的意思。关于这个 xml 的配置请看第 2 步的记载。</p>
+</blockquote>
+<p>paths配置</p>
+<p><img src="/img/0017.png" srcset="/img/loading.gif" lazyload></p>
+<p>通常的做法是在工程 res 目录下新建一个 xml 目录，并在该 xml 目录下新建一个 xml 文件。文件的名称必须与第 1 步中 @xml&#x2F; 属性值中配置的一致。</p>
+<p><img src="/img/0018.png" srcset="/img/loading.gif" lazyload></p>
+<p>Java代码配置<br>Java 代码的配置就没什么特别的了，关键的代码其实只有一行：<br>FileProvider.getUriForFile(_instance,_instance.getPackageName()+”.fileprovider”, updateFile);</p>
+<ol>
+<li>context：_instance, 这里需要传入一个上下文</li>
+<li>authority：可以通代码在AndroidManifest.xml里面获得</li>
+<li>file：是你需要的安装的文件</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>APP远程升级</div>
+      <div>http://example.com/2025/03/25/APP远程升级/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>binru.wang</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/05/10/%E5%AE%9A%E5%88%B6%E5%9C%B0%E9%9D%A2%E7%AB%99/" title="基于QGC的自制地面站设计">
+                        <span class="hidden-mobile">基于QGC的自制地面站设计</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
